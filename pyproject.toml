@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "article-epub"
+version = "0.1.0"
+description = "Tool to convert scientific articles available as HTML to EPUB format"
+authors = [
+    { name = "Ken Keliner" },
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+dependencies = ["requests", "beautifulsoup4", "pypandoc"]
+requires-python = ">=3.10"
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: POSIX",
+    "Environment :: Console",
+    "Topic :: Text Processing",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research"
+]
+keywords = ["epub", "articles", "conversion"]
+
+[project.optional-dependencies]
+pandoc = ["pypandoc_binary"]
+selenium = ["selenium"]
+
+[project.urls]
+Homepage = "https://github.com/jrom99/article-epub"
+Repository = "https://github.com/jrom99/article-epub"
+Issues = "https://github.com/jrom99/article-epub/issues"
+
+[project.scripts]
+a2e = "article_epub.__main__:main"

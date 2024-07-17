@@ -30,9 +30,6 @@ class Publisher(ABC):
 
     def soupify(self):
         try:
-            from selenium import webdriver
-            from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
-
             return self.soupify_webdriver()
         except (ImportError, OSError):
             return self.soupify_localfile()
@@ -49,6 +46,9 @@ class Publisher(ABC):
 
     def soupify_webdriver(self):
         """Get HTML from article's page"""
+        from selenium import webdriver  # type: ignore noqa: F401
+        from selenium.webdriver.firefox.firefox_binary import FirefoxBinary # type: ignore noqa: F401
+
         self.get_final_url()
         os.environ["MOZ_HEADLESS"] = "1"
         print("Starting headless browser...", end="", flush=True)
