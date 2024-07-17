@@ -1,10 +1,11 @@
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
-from time import sleep
 from abc import ABC, abstractmethod
+from time import sleep
 
 import pypandoc
 import requests
@@ -195,6 +196,10 @@ class Publisher(ABC):
 
         print("Generating epub.............", end="", flush=True)
         pypandoc.convert_text(combined, format="html", to="epub+raw_html", extra_args=args, outputfile=output_raw)
+
+        if shutil.which("ebook-convert") is None:
+            raise OSError("Failed to find ebook-convert, is Calibre installed?")
+
         subprocess.check_output(["ebook-convert", output_raw, self.output, "--no-default-epub-cover"])
         print("done")
 

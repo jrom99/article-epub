@@ -1,7 +1,13 @@
+import shutil
 from urllib.parse import unquote
 
 import requests
 from bs4 import BeautifulSoup
+
+
+def ensure_calibre_installed():
+    if shutil.which("ebook-convert") is None:
+        raise OSError("ebook-convert not found")
 
 
 def url_from_title(title: str):

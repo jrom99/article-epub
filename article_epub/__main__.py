@@ -2,6 +2,7 @@
 import argparse
 import sys
 
+from pypandoc import ensure_pandoc_installed
 import article_epub
 
 parser = argparse.ArgumentParser()
@@ -20,6 +21,9 @@ def main():
         for i in pubs:
             print(f"• {i}")
         sys.exit()
+
+    ensure_pandoc_installed()
+    article_epub.ensure_calibre_installed()
 
     if args.u is not None:
         url = args.u
