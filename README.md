@@ -33,7 +33,7 @@ External dependencies
 
 * [Calibre](https://calibre-ebook.com/) (to access `ebook-convert`)
 * Firefox with headless support (Optional, requires `pip install article-epub[selenium]`)
-* [Geckodriver](https://github.com/mozilla/geckodriver/releases) installed somewhere in `$PATH` (Optional, `pip install article-epub[selenium]`)
+* [Geckodriver](https://github.com/mozilla/geckodriver/releases) installed somewhere in `$PATH` (Optional, requires `pip install article-epub[selenium]`)
 * [Pandoc](http://pandoc.org/) (Optional, can be installed automatically via `pip install article-epub[pandoc]`)
 
 Installation
