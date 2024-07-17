@@ -117,41 +117,22 @@ class Publisher(object):
 
     def get_citation(self, link=False):
         """Generate a formatted citation from metadata"""
-        all_authors = ""
-        for i in range(0, len(self.author_surnames)):
-            all_authors += self.author_surnames[i] + ", "
-            all_authors += self.author_givennames[i]
-            if i != (len(self.author_surnames) - 1):
-                all_authors += "; "
-        if all_authors[-1] == ".":
-            cap = " "
-        else:
-            cap = ". "
+        all_authors = "; ".join(
+            f"{surname}, {given_name}"
+            for surname, given_name in zip(self.author_surnames, self.author_givennames, strict=True)
+        )
+
+        all_authors = all_authors.strip(".")
 
         if link:
-            doi = '<a href="https://dx.doi.org/' + self.doi + '">' + self.doi + "</a>"
+            doi = f'<a href="https://dx.doi.org/{self.doi}">{self.doi}</a>'
         else:
             doi = self.doi
 
         if self.volume != "":
-            return (
-                all_authors
-                + cap
-                + self.year
-                + ". "
-                + self.title
-                + ". "
-                + self.journal
-                + " "
-                + self.volume
-                + ": "
-                + self.pages
-                + "."
-                + " doi: "
-                + doi
-            )
+            return f"{all_authors}. {self.year}. {self.title}. {self.journal} {self.volume}; {self.pages}. doi: {doi}"
         else:
-            return all_authors + cap + self.year + ". " + self.title + ". " + self.journal + ". " + " doi: " + doi
+            return f"{all_authors}. {self.year}. {self.title}. {self.journal}. doi: {doi}"
 
     def extract_data(self):
         self.check_fulltext()
@@ -167,14 +148,10 @@ class Publisher(object):
     def epubify(self, output=None):
         """Convert data into epub format"""
 
-        all_authors = ""
-        for i in range(0, len(self.author_surnames)):
-            all_authors += self.author_givennames[i] + " "
-            all_authors += self.author_surnames[i]
-            if i != (len(self.author_surnames) - 1):
-                all_authors += ", "
-
-        self.get_citation()
+        all_authors = "; ".join(
+            f"{surname}, {given_name}"
+            for surname, given_name in zip(self.author_surnames, self.author_givennames, strict=True)
+        )
 
         args = []
         args.append("-M")
@@ -184,21 +161,17 @@ class Publisher(object):
         # args.append('--parse-raw')
         args.append("--webtex")
 
-        if output == None:
-            self.output = self.author_surnames[0] + "_" + self.year + ".epub"
+        if output is None:
+            self.output = f"{self.author_surnames[0]}_{self.year}.epub"
         else:
             self.output = output
 
         output_raw = os.path.join(tempfile.gettempdir(), "raw.epub")
 
-        combined = ""
-        combined += str(self.get_citation(link=True))
-        combined += str(self.abstract)
-        combined += str(self.body)
-        combined += str(self.references)
+        combined = f"{self.get_citation(link=True)}{self.abstract}{self.body}{self.references}"
 
         print("Generating epub.............", end="", flush=True)
-        epubout = pypandoc.convert_text(
+        pypandoc.convert_text(
             combined, format="html", to="epub+raw_html", extra_args=args, outputfile=output_raw
         )
         subprocess.check_output(["ebook-convert", output_raw, self.output, "--no-default-epub-cover"])
