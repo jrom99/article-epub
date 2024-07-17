@@ -1,6 +1,7 @@
 from article_epub.publisher import Publisher, register_publisher
 import sys
 
+
 class TandF(Publisher):
     """Class for Taylor & Francis articles"""
 
@@ -8,40 +9,39 @@ class TandF(Publisher):
     domains = ["tandfonline.com"]
 
     def get_final_url(self):
-        if '/abs/' in self.url:
-            self.url = self.url.replace('/abs/','/full/')
-   
+        if "/abs/" in self.url:
+            self.url = self.url.replace("/abs/", "/full/")
+
     def check_fulltext(self):
-        test = self.soup.find_all('div',class_='hlFld-Fulltext')
+        test = self.soup.find_all("div", class_="hlFld-Fulltext")
         if len(test) < 1:
-            sys.exit('Error: Can\'t access fulltext of article')
+            sys.exit("Error: Can't access fulltext of article")
         else:
-            return(True)
-    
+            return True
+
     def get_doi(self):
         if self.doi == None:
-            self.doi = str(self.soup.find('meta',{'scheme':'doi'})['content'])
-            
+            self.doi = str(self.soup.find("meta", {"scheme": "doi"})["content"])
+
     def get_abstract(self):
         """Get article abstract"""
-        abstract_raw = self.soup.find('div',class_='hlFld-Abstract')
+        abstract_raw = self.soup.find("div", class_="hlFld-Abstract")
         try:
-            abstract_raw.find('p',class_='summary-title').decompose()
+            abstract_raw.find("p", class_="summary-title").decompose()
         except:
             pass
         try:
-            abstract_raw.find('div',{'id':'mathJaxToggle'}).decompose()
+            abstract_raw.find("div", {"id": "mathJaxToggle"}).decompose()
         except:
             pass
-        
+
         self.abstract = str(abstract_raw)
 
     def get_keywords(self):
         """Get article keywords"""
         self.keywords = []
         try:
-            keywords_raw = self.soup.find('div',class_='hlFld-KeywordText') \
-                .find_all('a')
+            keywords_raw = self.soup.find("div", class_="hlFld-KeywordText").find_all("a")
             for i in keywords_raw:
                 self.keywords.append(i.text)
         except:
@@ -49,69 +49,68 @@ class TandF(Publisher):
 
     def get_body(self):
         """Get body of article"""
-        body_raw = self.soup.find_all('div',class_='NLM_sec_level_1')
-        
-        for i in self.soup.find_all('div',{'id':'figureViewerArticleInfo'}):
+        body_raw = self.soup.find_all("div", class_="NLM_sec_level_1")
+
+        for i in self.soup.find_all("div", {"id": "figureViewerArticleInfo"}):
             i.decompose()
 
-        for i in self.soup.find_all('div',{'id':'tableViewerArticleInfo'}):
+        for i in self.soup.find_all("div", {"id": "tableViewerArticleInfo"}):
             i.decompose()
 
-        cites = self.soup.find_all('span',class_='ref-lnk')
+        cites = self.soup.find_all("span", class_="ref-lnk")
         for i in cites:
-            refid = i.find('a')['data-rid']
-            i.find('a')['href'] = '#'+refid
-            i.find('span',class_='ref-overlay').decompose()
+            refid = i.find("a")["data-rid"]
+            i.find("a")["href"] = "#" + refid
+            i.find("span", class_="ref-overlay").decompose()
 
-        figs = self.soup.find_all('div',class_='figure')
+        figs = self.soup.find_all("div", class_="figure")
         for i in figs:
-            figid = i['id']
-            i.find('div',class_='figureInfo').decompose()
-            link = 'https://www.tandfonline.com'+i.find('img')['src']
-            i.find('img')['src'] = link
+            figid = i["id"]
+            i.find("div", class_="figureInfo").decompose()
+            link = "https://www.tandfonline.com" + i.find("img")["src"]
+            i.find("img")["src"] = link
 
-        tabs = self.soup.find_all('div',class_='tableView')
+        tabs = self.soup.find_all("div", class_="tableView")
         for i in tabs:
             try:
-                i.find('h3').name = 'b'
+                i.find("h3").name = "b"
             except:
                 pass
-            csv = i.find('a',{'id':'CSVdownloadButton'})
-            link = 'https://www.tandfonline.com'+csv['href']
-            csv['href'] = link
-            i.find('a',{'id':'displaySizeTable'}).decompose()
-       
-        for i in self.soup.find_all('span', class_='disp-formula'):
-            
-            link = 'https://www.tandfonline.com'+ \
-                    i.find('noscript').find('img')['src']
+            csv = i.find("a", {"id": "CSVdownloadButton"})
+            link = "https://www.tandfonline.com" + csv["href"]
+            csv["href"] = link
+            i.find("a", {"id": "displaySizeTable"}).decompose()
 
-            for j in i.find_all('noscript'):
+        for i in self.soup.find_all("span", class_="disp-formula"):
+            link = "https://www.tandfonline.com" + i.find("noscript").find("img")["src"]
+
+            for j in i.find_all("noscript"):
                 j.decompose()
 
-            i.find('img')['src'] = link
+            i.find("img")["src"] = link
 
-        for i in self.soup.find_all('span', class_='NLM_inline-graphic'):
-            for j in i.find_all('noscript'):
+        for i in self.soup.find_all("span", class_="NLM_inline-graphic"):
+            for j in i.find_all("noscript"):
                 j.decompose()
-            
-            link = 'https://www.tandfonline.com'+i.find('img')['src']
-            i.find('img')['src'] = link
 
-        self.body = ''
+            link = "https://www.tandfonline.com" + i.find("img")["src"]
+            i.find("img")["src"] = link
+
+        self.body = ""
         for i in body_raw:
             self.body += str(i)
-    
+
     def get_references(self):
         """Get references list"""
-        references_raw = self.soup.find('ul',{'id':'references-Section'})
-        for i in references_raw.find_all('div',class_='xlinks-container'):
+        references_raw = self.soup.find("ul", {"id": "references-Section"})
+        for i in references_raw.find_all("div", class_="xlinks-container"):
             i.decompose()
 
-        for i in references_raw.find_all('img'):
+        for i in references_raw.find_all("img"):
             i.decompose()
-        
-        references_title = '<h2>References</h2>\n'
-        self.references = references_title+str(references_raw)
+
+        references_title = "<h2>References</h2>\n"
+        self.references = references_title + str(references_raw)
+
 
 register_publisher(TandF)
