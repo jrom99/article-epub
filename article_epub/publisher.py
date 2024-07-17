@@ -1,14 +1,13 @@
-from selenium import webdriver
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
-from bs4 import BeautifulSoup
-import os
-import sys
-import pypandoc
-from time import sleep
-import subprocess
-import requests
 import json
+import os
+import subprocess
+import sys
 import tempfile
+from time import sleep
+
+import pypandoc
+import requests
+from bs4 import BeautifulSoup
 
 _publishers = list()
 _publisher_domains = dict()
@@ -28,6 +27,24 @@ class Publisher(object):
         pass
 
     def soupify(self):
+        try:
+            from selenium import webdriver
+            from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+            return self.soupify_webdriver()
+        except (ImportError, OSError):
+            return self.soupify_localfile()
+
+    def soupify_localfile(self):
+        while True:
+            path = input("Local .html file path (use SingleFile extension):\n")
+            if os.path.exists(path):
+                break
+            print("File not found")
+
+        with open(path) as handle:
+            self.soup = BeautifulSoup(handle, 'html.parser')
+
+    def soupify_webdriver(self):
         """Get HTML from article's page"""
         self.get_final_url()
         os.environ['MOZ_HEADLESS'] = '1'
@@ -38,7 +55,7 @@ class Publisher(object):
         elif(os.name == "nt"):
             binary = FirefoxBinary('C:/Program Files/Mozilla Firefox/firefox.exe')
         else:
-            sys.exit("Error: Unknown OS")
+            raise OSError("Unknown OS")
 
         try:
             driver_options = webdriver.FirefoxOptions()
@@ -47,15 +64,12 @@ class Publisher(object):
             print('done')
         except Exception as e:
             print(e)
-            sys.exit('Failed to load Firefox; is it installed?')
+            raise OSError('Failed to load Firefox; is it installed?')
 
         print('Loading page................',end="",flush=True)
-        try:
-            driver.get(self.url)
-        except:
-            sys.exit('Failed to load URL')
+        driver.get(self.url)
 
-        if self.doi != None:
+        if self.doi is not None:
             sleep(5) #To allow redirects
 
         sleep(5)
