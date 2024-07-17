@@ -36,4 +36,4 @@ Repository = "https://github.com/jrom99/article-epub"
 Issues = "https://github.com/jrom99/article-epub/issues"
 
 [project.scripts]
-a2e = "article_epub.__main__:main"
+article-epub = "article_epub.__main__:main"

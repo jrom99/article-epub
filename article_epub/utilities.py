@@ -1,4 +1,4 @@
-import shutil
+import subprocess
 from urllib.parse import unquote
 
 import requests
@@ -6,8 +6,12 @@ from bs4 import BeautifulSoup
 
 
 def ensure_calibre_installed():
-    if shutil.which("ebook-convert") is None:
-        raise OSError("ebook-convert not found")
+    try:
+        subprocess.run(["ebook-convert", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print("ebook-convert is installed and available.")
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        msg = "ebook-convert is not installed or not found in PATH. Please install Calibre and ensure ebook-convert is available in your PATH."
+        raise RuntimeError(msg) from None
 
 
 def url_from_title(title: str):

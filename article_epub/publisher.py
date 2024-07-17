@@ -66,9 +66,8 @@ class Publisher(ABC):
             driver_options.binary = binary
             driver = webdriver.Firefox(options=driver_options)
             print("done")
-        except Exception as e:
-            print(e)
-            raise OSError("Failed to load Firefox; is it installed?")
+        except Exception as err:
+            raise RuntimeError("Failed to load Firefox; is it installed?") from err
 
         print("Loading page................", end="", flush=True)
         driver.get(self.url)
@@ -198,7 +197,7 @@ class Publisher(ABC):
         pypandoc.convert_text(combined, format="html", to="epub+raw_html", extra_args=args, outputfile=output_raw)
 
         if shutil.which("ebook-convert") is None:
-            raise OSError("Failed to find ebook-convert, is Calibre installed?")
+            raise RuntimeError("Failed to find ebook-convert, is Calibre installed?")
 
         subprocess.check_output(["ebook-convert", output_raw, self.output, "--no-default-epub-cover"])
         print("done")
@@ -223,11 +222,11 @@ def match_publisher(url, doi):
     """Match a URL to a publisher class"""
     domain = ".".join(url.split("//")[-1].split("/")[0].split("?")[0].split(".")[-2:])
     if domain == "doi.org":
-        sys.exit("DOI not found; is it correct?")
+        raise ValueError("DOI not found; is it correct?")
 
     try:
         art = get_publishers()[domain](url=url, doi=doi)
-        print("Matched URL to publisher: " + art.name)
+        print(f"Matched URL to publisher: {art.name}")
         return art
-    except Exception:
-        sys.exit("Publisher [" + domain + "] not supported.")
+    except Exception as err:
+        raise ValueError(f"Publisher [{domain}] not supported.") from err

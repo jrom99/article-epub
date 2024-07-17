@@ -28,25 +28,16 @@ Currently, the following publishers are supported:
 * Nature Publishing
 * University of Chicago Press
 
-Dependencies
+External dependencies
 ------------
 
-* Linux environment required
 * [Calibre](https://calibre-ebook.com/) (to access `ebook-convert`)
-* Firefox with headless support
-* [Geckodriver](https://github.com/mozilla/geckodriver/releases) installed somewhere in `$PATH`
-* [Pandoc](http://pandoc.org/)
-
-    Python packages (available with `pip`):
-
-* [Selenium](http://selenium-python.readthedocs.io/)
-* [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
-* [pypandoc](https://github.com/bebraw/pypandoc)
+* Firefox with headless support (Optional, requires `pip install article-epub[selenium]`)
+* [Geckodriver](https://github.com/mozilla/geckodriver/releases) installed somewhere in `$PATH` (Optional, `pip install article-epub[selenium]`)
+* [Pandoc](http://pandoc.org/) (Optional, can be installed automatically via `pip install article-epub[pandoc]`)
 
 Installation
 ------------
-
-I plan to properly package the application for installation with `pip` in the future, but for now it has to be installed manually.
 
 1. Make sure the dependencies listed above are installed.
 
@@ -56,9 +47,7 @@ I plan to properly package the application for installation with `pip` in the fu
     git clone https://github.com/kenkellner/article-epub
     ```
 
-3. Make `article-epub.py` executable and put it in your `$PATH`.
-
-4. To allow importing the library for use in other Python scripts, copy (or symlink) the `article_epub` folder into your local Python 3 library (e.g. `~/.local/lib/python3.6/site-packages/`).
+3. Run `pip install .` inside the repository
 
 Usage
 -----
