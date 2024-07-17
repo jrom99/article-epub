@@ -47,7 +47,7 @@ class Publisher(ABC):
     def soupify_webdriver(self):
         """Get HTML from article's page"""
         from selenium import webdriver  # type: ignore noqa: F401
-        from selenium.webdriver.firefox.firefox_binary import FirefoxBinary # type: ignore noqa: F401
+        from selenium.webdriver.firefox.firefox_binary import FirefoxBinary  # type: ignore noqa: F401
 
         self.get_final_url()
         os.environ["MOZ_HEADLESS"] = "1"
@@ -111,13 +111,15 @@ class Publisher(ABC):
             self.year = str(self.meta["published-print"]["date-parts"][0][0])
         else:
             self.year = str(self.meta["published-online"]["date-parts"][0][0])
+
         try:
             self.volume = str(self.meta["volume"])
-        except:
+        except Exception:
             self.volume = ""
+
         try:
             self.pages = str(self.meta["page"])
-        except:
+        except Exception:
             self.pages = ""
 
     @abstractmethod
@@ -222,5 +224,5 @@ def match_publisher(url, doi):
         art = get_publishers()[domain](url=url, doi=doi)
         print("Matched URL to publisher: " + art.name)
         return art
-    except:
+    except Exception:
         sys.exit("Publisher [" + domain + "] not supported.")

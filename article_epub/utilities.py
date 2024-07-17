@@ -1,15 +1,16 @@
-import requests
-from bs4 import BeautifulSoup
-import sys
 from urllib.parse import unquote
 
+import requests
+from bs4 import BeautifulSoup
 
-def url_from_title(title):
+
+def url_from_title(title: str):
     print("Getting URL from title......")
+    url_stem = "https://scholar.google.com/scholar?hl=en&as_sdt=0%2C49&q="
+    search = title.replace(" ", "+").replace("\n", "").strip('"')
+    full_url = f'{url_stem}"{search}"'
+
     try:
-        url_stem = 'https://scholar.google.com/scholar?hl=en&as_sdt=0%2C49&q="'
-        search = title.replace(" ", "+").replace("\n", "")
-        full_url = url_stem + search + '"'
         out = requests.get(full_url, headers={"User-Agent": "Mozilla/5.0"})
         soup = BeautifulSoup(out.content, "html.parser")
         result = soup.find("div", class_="gs_scl").find("div", class_="gs_ri").find("a")
@@ -17,25 +18,24 @@ def url_from_title(title):
         possible_link = result["href"]
 
         if possible_title == "":
-            print("No matching link available.")
-            sys.exit("Getting URL from title failed")
+            raise ValueError("Getting URL from title failed: No matching link available.")
 
         print("Provided title:")
         print(title)
         print("Found following article:")
         print(possible_title)
-        choice = input("\033[0;37m" + "Is this correct (y/n)? " + "\033[00m")
+        choice = input("\033[0;37m" + "Is this correct (y/n)? " + "\033[00m").lower()
         if choice == "y":
             return possible_link
         else:
-            sys.exit("Getting URL from title failed")
-    except:
-        sys.exit("Getting URL from title failed")
+            raise ValueError("Getting URL from title failed")
+    except Exception as e:
+        raise ValueError("Getting URL from title failed") from e
 
 
-def url_from_doi(doi):
+def url_from_doi(doi: str):
     print("Getting URL from DOI........", end="", flush=True)
-    r = requests.get("https://doi.org/" + doi, headers={"User-Agent": "Mozilla/5.0"})
+    r = requests.get(f"https://doi.org/{doi}", headers={"User-Agent": "Mozilla/5.0"})
 
     # To handle Elsevier linkinghub redirects
     soup = BeautifulSoup(r.content, "html.parser")
