@@ -4,6 +4,7 @@ import subprocess
 import sys
 import tempfile
 from time import sleep
+from abc import ABC, abstractmethod
 
 import pypandoc
 import requests
@@ -14,7 +15,7 @@ _publisher_domains = dict()
 _publisher_names = list()
 
 
-class Publisher(object):
+class Publisher(ABC):
     """General class for scientific article publishers"""
 
     def __init__(self, url, doi=None, out_format="epub"):
@@ -88,6 +89,10 @@ class Publisher(object):
         r = requests.get(url, headers=headers)
         self.meta = r.json()
 
+    @abstractmethod
+    def get_doi(self):
+        pass
+
     def get_metadata(self):
         """Extract metadata from DOI"""
         self.doi2json()
@@ -114,6 +119,22 @@ class Publisher(object):
             self.pages = str(self.meta["page"])
         except:
             self.pages = ""
+
+    @abstractmethod
+    def get_abstract(self):
+        pass
+
+    @abstractmethod
+    def get_keywords(self):
+        pass
+
+    @abstractmethod
+    def get_body(self):
+        pass
+
+    @abstractmethod
+    def get_references(self):
+        pass
 
     def get_citation(self, link=False):
         """Generate a formatted citation from metadata"""
@@ -171,9 +192,7 @@ class Publisher(object):
         combined = f"{self.get_citation(link=True)}{self.abstract}{self.body}{self.references}"
 
         print("Generating epub.............", end="", flush=True)
-        pypandoc.convert_text(
-            combined, format="html", to="epub+raw_html", extra_args=args, outputfile=output_raw
-        )
+        pypandoc.convert_text(combined, format="html", to="epub+raw_html", extra_args=args, outputfile=output_raw)
         subprocess.check_output(["ebook-convert", output_raw, self.output, "--no-default-epub-cover"])
         print("done")
 
