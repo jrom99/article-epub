@@ -25,11 +25,11 @@ def main():
             print('• '+i)
         sys.exit()
     
-    if args.u != None:
+    if args.u is not None:
         url = args.u
-    elif args.d != None:
+    elif args.d is not None:
         url = article_epub.url_from_doi(args.d)
-    elif args.t != None:
+    elif args.t is not None:
         url = article_epub.url_from_title(args.t)
     else:
         sys.exit('Must provide URL, DOI or title')
