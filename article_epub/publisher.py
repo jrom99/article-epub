@@ -176,13 +176,14 @@ class Publisher(ABC):
             for surname, given_name in zip(self.author_surnames, self.author_givennames, strict=True)
         )
 
-        args = []
-        args.append("-M")
-        args.append('title="' + self.title + '"')
-        args.append("-M")
-        args.append('author="' + all_authors + '"')
-        # args.append('--parse-raw')
-        args.append("--webtex")
+        args = [
+            "-M",
+            f'title="{self.title}"',
+            "-M",
+            f'author="{all_authors}"',
+            # '--parse-raw',
+            "--webtex",
+        ]
 
         if output is None:
             self.output = f"{self.author_surnames[0]}_{self.year}.epub"
