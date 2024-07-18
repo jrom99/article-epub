@@ -6,12 +6,17 @@ build-backend = "setuptools.build_meta"
 name = "article-epub"
 version = "0.1.0"
 description = "Tool to convert scientific articles available as HTML to EPUB format"
-authors = [
-    { name = "Ken Keliner" },
-]
+authors = [{ name = "Ken Keliner" }]
 readme = "README.md"
 license = { file = "LICENSE" }
-dependencies = ["requests", "beautifulsoup4", "pypandoc"]
+dependencies = [
+    "requests",
+    "beautifulsoup4",
+    "pypandoc",
+    # calibre deps:
+    "msgpack",
+    "css-parser",
+]
 requires-python = ">=3.10"
 
 classifiers = [
@@ -22,9 +27,9 @@ classifiers = [
     "Topic :: Text Processing",
     "Intended Audience :: Developers",
     "Intended Audience :: Education",
-    "Intended Audience :: Science/Research"
+    "Intended Audience :: Science/Research",
 ]
-keywords = ["epub", "articles", "conversion"]
+keywords = ["epub", "articles", "conversion", "lxml"]
 
 [project.optional-dependencies]
 pandoc = ["pypandoc_binary"]

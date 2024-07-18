@@ -168,7 +168,7 @@ class Publisher(ABC):
         self.get_references()
         print("done")
 
-    def epubify(self, output=None):
+    def epubify(self, output=None, run_ebook_convert: bool = True):
         """Convert data into epub format"""
 
         all_authors = "; ".join(
@@ -199,10 +199,13 @@ class Publisher(ABC):
         print("Generating epub.............", end="", flush=True)
         pypandoc.convert_text(combined, format="html", to="epub+raw_html", extra_args=args, outputfile=output_raw)
 
-        if shutil.which("ebook-convert") is None:
-            raise RuntimeError("Failed to find ebook-convert, is Calibre installed?")
-
-        subprocess.check_output(["ebook-convert", output_raw, self.output, "--no-default-epub-cover"])
+        if not run_ebook_convert:
+            shutil.copy2(output_raw, self.output)
+        elif shutil.which("ebook-convert") is not None:
+            subprocess.check_output(["ebook-convert", output_raw, self.output, "--no-default-epub-cover"])
+        else:
+            from article_epub.calibre.ebooks.conversion.cli import main as ebook_convert
+            ebook_convert(["ebook-convert", output_raw, self.output, "--no-default-epub-cover"])
         print("done")
 
 

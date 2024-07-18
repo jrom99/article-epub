@@ -23,7 +23,6 @@ def main():
         sys.exit()
 
     ensure_pandoc_installed()
-    article_epub.ensure_calibre_installed()
 
     if args.u is not None:
         url = args.u
