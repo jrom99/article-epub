@@ -6,8 +6,8 @@ import os
 import re
 import shutil
 
-from calibre import CurrentDir
-from calibre.customize import Plugin
+from article_epub.calibre import CurrentDir
+from article_epub.calibre.customize import Plugin
 
 
 class ConversionOption:

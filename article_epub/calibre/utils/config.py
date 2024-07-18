@@ -1,7 +1,3 @@
-__license__   = 'GPL v3'
-__copyright__ = '2008, Kovid Goyal kovid@kovidgoyal.net'
-__docformat__ = 'restructuredtext en'
-
 '''
 Manage application-wide preferences.
 '''
@@ -10,8 +6,8 @@ import optparse
 import os
 from copy import deepcopy
 
-from calibre.constants import CONFIG_DIR_MODE, __appname__, __author__, config_dir, get_version, iswindows
-from calibre.utils.config_base import (
+from article_epub.calibre.constants import CONFIG_DIR_MODE, __appname__, __author__, config_dir, get_version, iswindows
+from article_epub.calibre.utils.config_base import (
     Config,
     ConfigInterface,
     ConfigProxy,
@@ -30,8 +26,8 @@ from calibre.utils.config_base import (
     to_json,
     tweaks,
 )
-from calibre.utils.localization import _
-from polyglot.builtins import native_string_type, string_or_bytes
+from article_epub.calibre.utils.localization import _
+from article_epub.calibre.polyglot_builtins import string_or_bytes
 
 # optparse uses gettext.gettext instead of _ from builtins, so we
 # monkey patch it.
@@ -104,7 +100,7 @@ class OptionParser(optparse.OptionParser):
                  **kwds):
         import textwrap
 
-        from calibre.utils.terminal import colored
+        from article_epub.calibre.utils.terminal import colored
 
         usage = textwrap.dedent(usage)
         if epilog is None:
@@ -177,11 +173,11 @@ class OptionParser(optparse.OptionParser):
 
     def options_iter(self):
         for opt in self.option_list:
-            if native_string_type(opt).strip():
+            if str(opt).strip():
                 yield opt
         for gr in self.option_groups:
             for opt in gr.option_list:
-                if native_string_type(opt).strip():
+                if str(opt).strip():
                     yield opt
 
     def option_by_dest(self, dest):
@@ -206,7 +202,7 @@ class OptionParser(optparse.OptionParser):
     def add_option_group(self, *args, **kwargs):
         if isinstance(args[0], string_or_bytes):
             args = list(args)
-            args[0] = native_string_type(args[0])
+            args[0] = str(args[0])
         return optparse.OptionParser.add_option_group(self, *args, **kwargs)
 
 
@@ -232,8 +228,8 @@ class DynamicConfig(dict):
         self.refresh()
 
     def read_old_serialized_representation(self):
-        from calibre.utils.serialize import pickle_loads
-        from calibre.utils.shared_file import share_open
+        from article_epub.calibre.utils.serialize import pickle_loads
+        from article_epub.calibre.utils.shared_file import share_open
         path = self.file_path.rpartition('.')[0]
         try:
             with share_open(path, 'rb') as f:

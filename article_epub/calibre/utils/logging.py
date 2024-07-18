@@ -10,8 +10,8 @@ from contextlib import suppress
 from functools import partial
 from threading import Lock
 
-from calibre.prints import prints
-from polyglot.builtins import as_unicode
+from article_epub.calibre.prints import prints
+from article_epub.calibre.polyglot_builtins import as_unicode
 
 DEBUG = 0
 INFO  = 1
@@ -59,7 +59,7 @@ class ANSIStream(Stream):
         }
 
     def prints(self, level, *args, **kwargs):
-        from calibre.utils.terminal import ColoredStream
+        from article_epub.calibre.utils.terminal import ColoredStream
         with ColoredStream(self.stream, self.color[level]):
             self._prints(*args, **kwargs)
 

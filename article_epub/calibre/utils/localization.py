@@ -19,7 +19,7 @@ def available_translations():
     if _available_translations is None:
         stats = P('localization/stats.calibre_msgpack', allow_user_override=False)
         if os.path.exists(stats):
-            from calibre.utils.serialize import msgpack_loads
+            from article_epub.calibre.utils.serialize import msgpack_loads
             with open(stats, 'rb') as f:
                 stats = msgpack_loads(f.read())
         else:
@@ -389,7 +389,7 @@ def _load_iso639():
     global _iso639
     if _iso639 is None:
         ip = P('localization/iso639.calibre_msgpack', allow_user_override=False, data=True)
-        from calibre.utils.serialize import msgpack_loads
+        from article_epub.calibre.utils.serialize import msgpack_loads
         _iso639 = msgpack_loads(ip)
         if 'by_3' not in _iso639:
             _iso639['by_3'] = _iso639['by_3t']

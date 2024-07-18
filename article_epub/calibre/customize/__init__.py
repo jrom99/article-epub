@@ -7,8 +7,8 @@ import os
 import sys
 import zipfile
 
-from calibre.constants import ismacos, iswindows, numeric_version
-from calibre.ptempfile import PersistentTemporaryFile
+from article_epub.calibre.constants import ismacos, iswindows, numeric_version
+from article_epub.calibre.ptempfile import PersistentTemporaryFile
 
 if iswindows:
     platform = 'windows'

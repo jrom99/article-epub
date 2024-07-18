@@ -419,7 +419,7 @@ class Config(ConfigInterface):
                 traceback.print_exc()
         if not src:
             path = path.rpartition('.')[0]
-            from calibre.utils.shared_file import share_open
+            from article_epub.calibre.utils.shared_file import share_open
             try:
                 with share_open(path, 'rb') as f:
                     src = f.read().decode('utf-8')

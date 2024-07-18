@@ -10,10 +10,10 @@ import shutil
 import sys
 from functools import partial
 
-from calibre import extract, filesystem_encoding, get_types_map, isbytestring, walk
-from calibre.constants import __version__
-from calibre.customize.conversion import DummyReporter, OptionRecommendation
-from calibre.customize.ui import (
+from article_epub.calibre import extract, filesystem_encoding, get_types_map, isbytestring, walk
+from article_epub.calibre.constants import __version__
+from article_epub.calibre.customize.conversion import DummyReporter, OptionRecommendation
+from article_epub.calibre.customize.ui import (
     available_input_formats,
     available_output_formats,
     input_profiles,
@@ -23,11 +23,11 @@ from calibre.customize.ui import (
     run_plugins_on_postprocess,
     run_plugins_on_preprocess,
 )
-from calibre.ebooks.conversion.preprocess import HTMLPreProcessor
-from calibre.ptempfile import PersistentTemporaryDirectory
-from calibre.utils.date import parse_date
-from calibre.utils.zipfile import ZipFile
-from polyglot.builtins import string_or_bytes
+from article_epub.calibre.ebooks.conversion.preprocess import HTMLPreProcessor
+from article_epub.calibre.ptempfile import PersistentTemporaryDirectory
+from article_epub.calibre.utils.date import parse_date
+from article_epub.calibre.utils.zipfile import ZipFile
+from article_epub.calibre.polyglot_builtins import string_or_bytes
 
 DEBUG_README=b'''
 This debug folder contains snapshots of the e-book as it passes through the
@@ -916,7 +916,7 @@ OptionRecommendation(name='search_replace',
                     self.changed_options.add(rec)
 
     def opts_to_mi(self, mi):
-        from calibre.ebooks.metadata import string_to_authors
+        from article_epub.calibre.ebooks.metadata import string_to_authors
         for x in self.metadata_option_names:
             val = getattr(self.opts, x, None)
             if val is not None:
@@ -961,15 +961,17 @@ OptionRecommendation(name='search_replace',
         Read all metadata specified by the user. Command line options override
         metadata from a specified OPF file.
         '''
-        from calibre.ebooks.metadata import MetaInformation
-        from calibre.ebooks.metadata.opf2 import OPF
+        from article_epub.calibre.ebooks.metadata import MetaInformation
+
         mi = MetaInformation(None, [])
         if self.opts.read_metadata_from_opf is not None:
+            from article_epub.calibre.ebooks.metadata.opf2 import OPF
             self.opts.read_metadata_from_opf = os.path.abspath(
                                             self.opts.read_metadata_from_opf)
             with open(self.opts.read_metadata_from_opf, 'rb') as stream:
                 opf = OPF(stream, os.path.dirname(self.opts.read_metadata_from_opf))
             mi = opf.to_book_metadata()
+
         self.opts_to_mi(mi)
         if mi.cover:
             if mi.cover.startswith('http:') or mi.cover.startswith('https:'):
@@ -1093,7 +1095,7 @@ OptionRecommendation(name='search_replace',
                     shutil.rmtree(x)
 
         # Run any preprocess plugins
-        from calibre.customize.ui import run_plugins_on_preprocess
+        from article_epub.calibre.customize.ui import run_plugins_on_preprocess
         self.input = run_plugins_on_preprocess(self.input)
 
         self.flush()
