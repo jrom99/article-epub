@@ -9,6 +9,8 @@ __pycache__/
 
 # C extensions
 *.so
+# but keep calibre plugins
+!*/calibre/plugins/**/*.so
 
 # Distribution / packaging
 .Python

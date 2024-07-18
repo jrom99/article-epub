@@ -177,9 +177,9 @@ class Publisher(ABC):
         )
 
         args = [
-            "-M",
+            "--metadata",
             f'title="{self.title}"',
-            "-M",
+            "--metadata",
             f'author="{all_authors}"',
             # '--parse-raw',
             "--webtex",
@@ -194,6 +194,8 @@ class Publisher(ABC):
 
         combined = f"{self.get_citation(link=True)}{self.abstract}{self.body}{self.references}"
 
+        # TODO: check how to enable pandoc support for inline images
+        # TODO: pandoc seems to be generating .jfif files
         print("Generating epub.............", end="", flush=True)
         pypandoc.convert_text(combined, format="html", to="epub+raw_html", extra_args=args, outputfile=output_raw)
 
